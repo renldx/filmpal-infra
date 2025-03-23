@@ -1,0 +1,23 @@
+services:
+  server:
+    build: ../filmpal-server
+    container_name: filmpal_server
+    ports:
+      - 8080:8080
+    environment:
+      - OPENAI_API_KEY
+      - OMDB_API_KEY
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: filmpal-database
+    ports:
+      - 1521:1521
+    environment:
+      - ORACLE_PWD
+    healthcheck:
+      test: ["CMD", "/opt/oracle/checkDBStatus.sh"]
+      start_period: 20s
